@@ -1,19 +1,55 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, session, url_for
 import mysql.connector
+from mysql.connector import Error
 
 app = Flask(__name__)
+app.secret_key = "sk"  # Change this to a random, secure value
 
-# Replace these values with your MySQL connection details
+# MySQL configurations
 db_config = {
-    'host': 'localhost',
     'user': 'root',
     'password': 'Exynox7510#',
-    'database': 'inventory'
+    'host': 'localhost',
+    'database': 'inventory',
 }
 
+def connect():
+    try:
+        connection = mysql.connector.connect(**db_config)
+        if connection.is_connected():
+            return connection
+    except Error as e:
+        print(f"Error: {e}")
+    return None
+
 @app.route('/')
+def home():
+    return render_template('login.html')
+
+@app.route('/login', methods=['POST'])
+def login():
+    username = request.form['username']
+    password = request.form['password']
+
+    connection = connect()
+    if connection:
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+        user = cursor.fetchone()
+        cursor.close()
+        connection.close()
+
+        if user and password == user[2]:  # Compare passwords directly (not recommended in production)
+            session['username'] = username
+            session['role'] = user[3]
+            return redirect(url_for('index'))
+        else:
+            return "Login failed. Check your username and password."
+    else:
+        return "Unable to connect to the database."
+
+@app.route('/index')
 def index():
-    # Fetch all products from the database
     connection = mysql.connector.connect(**db_config)
     cursor = connection.cursor(dictionary=True)
     cursor.execute("SELECT * FROM products")
@@ -21,6 +57,9 @@ def index():
     connection.close()
     
     return render_template('index.html', products=products)
+
+
+    
 
 @app.route('/add', methods=['POST'])
 def add_product():
@@ -64,6 +103,7 @@ def update_product(product_id):
     connection.close()
     
     return redirect(url_for('index'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
