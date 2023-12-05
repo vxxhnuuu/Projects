@@ -4,53 +4,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventory Management System</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1em;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        a {
+            text-decoration: none;
+            color: #3498db;
+        }
+
+        button {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
 </head>
 <body>
-    <h1>Inventory Management System</h1>
-    
-    <h2>Add Product</h2>
-    <form action="/add" method="post">
-        <label for="name">Product Name:</label>
-        <input type="text" name="name" required>
-        <br>
-        <label for="quantity">Quantity:</label>
-        <input type="number" name="quantity" required>
-        <br>
-        <label for="price">Price:</label>
-        <input type="text" name="price" required>
-        <br>
-        <button type="submit">Add Product</button>
-    </form>
+    <header>
+        <h1>Inventory Management System</h1>
+    </header>
 
-    <h2>Products</h2>
-    <table border="1">
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Action</th>
-        </tr>
-        {% for product in products %}
+    <section>
+        <h2>Add Product</h2>
+        <form action="/add" method="post">
+            <label for="name">Product Name:</label>
+            <input type="text" name="name" required>
+            <br>
+            <label for="quantity">Quantity:</label>
+            <input type="number" name="quantity" required>
+            <br>
+            <label for="price">Price:</label>
+            <input type="text" name="price" required>
+            <br>
+            <button type="submit">Add Product</button>
+        </form>
+
+        <h2>Products</h2>
+        <table>
             <tr>
-                <td>{{ product.id }}</td>
-                <td>{{ product.name }}</td>
-                <td>{{ product.quantity }}</td>
-                <td>{{ product.price }}</td>
-                <td>
-                    <a href="/delete/{{ product.id }}">Delete</a>
-                    <form action="/update/{{ product.id }}" method="post" style="display:inline;">
-                        <label for="quantity">New Quantity:</label>
-                        <input type="number" name="quantity" required>
-                        <br>
-                        <label for="price">New Price:</label>
-                        <input type="text" name="price" required>
-                        <br>
-                        <button type="submit">Update</button>
-                    </form>
-                </td>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Action</th>
             </tr>
-        {% endfor %}
-    </table>
+            {% for product in products %}
+                <tr>
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.quantity }}</td>
+                    <td>{{ product.price }}</td>
+                    <td>
+                        <a href="/delete/{{ product.id }}">Delete</a>
+                        <form action="/update/{{ product.id }}" method="post" style="display:inline;">
+                            <label for="quantity">New Quantity:</label>
+                            <input type="number" name="quantity" required>
+                            <br>
+                            <label for="price">New Price:</label>
+                            <input type="text" name="price" required>
+                            <br>
+                            <button type="submit">Update</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </section>
 </body>
 </html>
